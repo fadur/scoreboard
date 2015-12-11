@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Unisport Tournament</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,700,900' rel='stylesheet' type='text/css'>
+    <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font: 13px;
+		font-family: 'Roboto', sans-serif;
+     }
+	
+	.container{
+		width: 100vw;
+		height: 100vh;
+		background-image: url(http://s3-eu-west-1.amazonaws.com/unisport-forever-paths/store-CPH/digital-signage/scoreboard/scoreboard-bg.png);
+		background-size: cover;
+		background-position: center center;
+		position: relative;
+		padding-top: 15%;
+	}
+	
+	.logo{
+	    width: 43%;
+	    margin: 0 auto;
+	    display: block;
+	}
+
+	.board__holder{
+		width: 78%;
+	    margin: 10% auto 0;
+	}
+	.team__holder{
+		display: inline-block;
+		width: 100%;
+	}
+	.team{
+	    background: #0abf5a;
+	    color: #fff;
+	    width: 50%;
+	    display: inline-block;
+	    float: left;
+	    padding-top: 4%;
+	    text-align: center;
+	    font-size: 7em;
+	    font-weight: 300;
+	    text-transform: uppercase;
+	}
+	.score{
+		font-size: 5.6em;
+		font-weight: 300;
+	}
+	#timer{
+		background: #fff;
+	    font-size: 19em;
+	    text-align: center;
+	    color: #0abf5a;
+	    font-weight: 300;
+	}
+	.unisportlife{
+		width: 62%;
+	    display: block;
+	    margin: 12% auto 0;
+	}
+    </style>
+	<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+	<script>
+	$(document).ready(function() {
+		var socket = io();
+		var gameOn = false;
+	  socket.on('scorehome', function(msg){
+	  	$('#home').text(msg);
+	  }); 	
+
+	  socket.on('scoreaway', function(msg){
+	  	$('#away').text(msg);
+	  }); 
+
+	  socket.on('start', function(msg){
+	    startgame();
+	    gameOn = true;
+	  }); 
+
+	  socket.on('resetgame', function(msg){
+	    resetgame();
+	    gameOn = false;
+	  }); 
+
+	  function startgame(){
+	  	if( !gameOn){
+
+		  	console.log('game on');
+
+			var min = parseInt( $('.min').attr('data-min') );
+		  	var sec = parseInt( $('.sec').attr("data-sec") );
+
+		  	var timer = setInterval(function(){
+		  
+		  		sec--;
+		  		if(sec < 10 ){
+		  			var u = "0" + sec;
+		  			$('.sec').html(u);
+		  		}else{
+		  			$('.sec').html(sec);
+		  		}
+
+		  		if(sec == 0){
+		  			min--;
+		  			sec = 60;
+		  			if(min <= 0 ){
+		  				console.log('stop');
+		  				clearInterval(timer);
+		  			}
+		  			$('.min').attr('data-min', min );
+		  			$('.sec').attr("data-sec", sec );
+		  		}else{
+		  			$('.min').attr('data-min', min);
+		  			$('.sec').attr('data-sec', sec);
+		  			$('.min').html( "0" + min);
+		  		}
+		  	}, 1000);
+	  	}
+	  }
+
+	  function resetgame(){
+	  	$('.min').attr('data-min', 3).text("04");
+	  	$('.sec').attr('data-sec', 60).text("00");
+	  	$('.score').text("0");
+	  	clearInterval(timer);
+	  	gameOn = false;
+	  }
+
+	});
+	  
+	</script>
+  </head>
+  <body>
+  	<div class="container">
+  		<img src="http://s3-eu-west-1.amazonaws.com/unisport-forever-paths/campaign/graphics/logo.png" class="logo">
+  		<div class="board__holder">
+  			<div class="team__holder">
+  				<div class="team home">
+		  			<p>Home</p>
+		  			<div class="score" id="home">0</div>
+			  	</div>
+			  	<div class="team away">
+			  		<p>Away</p>
+			  		<div class="score" id="away">0</div>
+			  	</div>
+  			</div>
+		  	<div id="timer">
+		  		<span class="min" data-min="3">04</span> :
+		  		<span class="sec" data-sec="60">00</span>
+		  	</div>
+		    <ul style="display:none;" id="messages"></ul>
+	    </div>
+	    <img src="http://s3-eu-west-1.amazonaws.com/unisport-forever-paths/campaign/graphics/unisportlife.png" class="unisportlife">
+    </div>
+  </body>
+</html>

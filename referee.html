@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Unisport Tournament</title>
+    <style>
+      .btn{
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        box-sizing: border-box;
+        background: #fefefe;
+        border: 1px solid #F5F5F5;
+        text-align: center;
+        display: inline-block;
+      }
+      #startgame, #reset{
+        width: 100px;
+        height: 50px;
+        background: #A5D6A7;
+        color: #fff;
+        line-height: 50px;
+      }
+    </style>
+	<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+	<script>
+	$(document).ready(function() {
+		var socket = io();
+
+    $('.home').on('click', '.btn', function(event) {
+        console.log($(this));
+        if($(this).hasClass('increase')){
+          $('#homescore').val( parseInt($('#homescore').val())+1);
+        }else if( $(this).hasClass('decrease') && $('#homescore').val() > 0){
+          $('#homescore').val( parseInt($('#homescore').val()) - 1);
+        }
+
+        socket.emit('scorehome', $('#homescore').val());
+        return false;
+      });
+  
+    $('#away').on('click', '.btn', function(event) {
+      
+      var aways = parseInt( $('#awayscore').val() );
+      if( $(this).hasClass('increase') ){
+        aways++;
+        $('#awayscore').val( aways );
+
+      }else if( $(this).hasClass('decrease') && aways > 0){
+        aways--;
+        $('#awayscore').val( aways);
+      }
+
+      socket.emit('scoreaway', aways);
+       console.log(aways);
+      return false;
+    });
+      
+
+    $('#startgame').click(function(event){
+      socket.emit('start', 'go');
+      return false;
+    });
+
+    $('#reset').click(function(event){
+      $('#homescore').val(0);
+      $('#awayscore').val(0);
+      socket.emit('resetgame', '');
+      return false;
+    });
+
+	});
+	  
+	</script>
+  </head>
+  <body>
+
+      <div class="home">      
+        <span>home</span>
+        <input id="homescore" name="home" type="text" value="0"/>
+        <div class="btn increase" data-team="home">+</div>
+        <div class="btn decrease" data-team="home">-</div>
+      </div>
+
+      <div id="away">
+        <span>away</span>
+        <input id="awayscore" name="away" type="text" value="0" />
+        <div class="btn increase" data-team="away">+</div>
+        <div class="btn decrease" data-team="away">-</div>
+      </div>
+
+    <div id="startgame">Start Game</div>
+    <div id="reset">Reset</div>
+
+  </body>
+</html>

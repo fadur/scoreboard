@@ -77,57 +77,53 @@
 	  }); 
 
 	  socket.on('start', function(msg){
-	    startgame();
 	    gameOn = true;
+	    startgame();
+	    
+	    console.log(gameOn);
 	  }); 
 
 	  socket.on('resetgame', function(msg){
-	    resetgame();
 	    gameOn = false;
+	    resetgame();   
 	  }); 
 
 	  function startgame(){
-	  	if( !gameOn){
-
-		  	console.log('game on');
-
 			var min = parseInt( $('.min').attr('data-min') );
 		  	var sec = parseInt( $('.sec').attr("data-sec") );
 
 		  	var timer = setInterval(function(){
-		  
-		  		sec--;
-		  		if(sec < 10 ){
-		  			var u = "0" + sec;
-		  			$('.sec').html(u);
-		  		}else{
-		  			$('.sec').html(sec);
-		  		}
+		  		if(gameOn){
+			  		sec--;
+			  		if(sec < 10 ){
+			  			var u = "0" + sec;
+			  			$('.sec').html(u);
+			  		}else{
+			  			$('.sec').html(sec);
+			  		}
 
-		  		if(sec == 0){
-		  			min--;
-		  			sec = 60;
-		  			if(min <= 0 ){
-		  				console.log('stop');
-		  				clearInterval(timer);
-		  			}
-		  			$('.min').attr('data-min', min );
-		  			$('.sec').attr("data-sec", sec );
-		  		}else{
-		  			$('.min').attr('data-min', min);
-		  			$('.sec').attr('data-sec', sec);
-		  			$('.min').html( "0" + min);
-		  		}
-		  	}, 1000);
-	  	}
-	  }
-
+			  		if(sec == 0){
+			  			min--;
+			  			sec = 60;
+			  			if(min <= 0 ){
+			  				console.log('stop');
+			  				clearInterval(timer);
+			  			}
+			  			$('.min').attr('data-min', min );
+			  			$('.sec').attr("data-sec", sec );
+			  		}else{
+			  			$('.min').attr('data-min', min);
+			  			$('.sec').attr('data-sec', sec);
+			  			$('.min').html( "0" + min);
+			  		}
+			  	}
+			  	}, 1000);
+		  	}
+	  
 	  function resetgame(){
 	  	$('.min').attr('data-min', 3).text("04");
 	  	$('.sec').attr('data-sec', 60).text("00");
 	  	$('.score').text("0");
-	  	clearInterval(timer);
-	  	gameOn = false;
 	  }
 
 	});

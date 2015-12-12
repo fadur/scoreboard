@@ -105,7 +105,8 @@
 			  		if(sec == 0){
 			  			min--;
 			  			sec = 60;
-			  			if(min <= 0 ){
+                                                console.log(min)
+			  			if(min < 0 ){
 			  				console.log('stop');
 			  				clearInterval(timer);
 			  			}
